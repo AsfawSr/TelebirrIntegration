@@ -21,6 +21,7 @@ public class PWSConfig {
     private String tlsTrustStorePath;
     private String tlsTrustStorePassword;
     private String tlsTrustStoreType;
+    private boolean mockEnabled;
 
     public String getFabricAppId() {
         return fabricAppId;
@@ -108,5 +109,13 @@ public class PWSConfig {
 
     public void setTlsTrustStoreType(String tlsTrustStoreType) {
         this.tlsTrustStoreType = tlsTrustStoreType;
+    }
+
+    public boolean isMockEnabled() {
+        return mockEnabled;
+    }
+
+    public void setMockEnabled(boolean mockEnabled) {
+        this.mockEnabled = mockEnabled;
     }
 }

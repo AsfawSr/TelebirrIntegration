@@ -20,16 +20,24 @@ import java.util.Map;
 public class ApplyFabricTokenService {
     private final PWSConfig pwsConfig;
     private final OkHttpClientBuilder okHttpClientBuilder;
+    private final TelebirrMockService telebirrMockService;
 
-    public ApplyFabricTokenService(PWSConfig pwsConfig, OkHttpClientBuilder okHttpClientBuilder) {
+    public ApplyFabricTokenService(PWSConfig pwsConfig,
+                                   OkHttpClientBuilder okHttpClientBuilder,
+                                   TelebirrMockService telebirrMockService) {
         this.pwsConfig = pwsConfig;
         this.okHttpClientBuilder = okHttpClientBuilder;
+        this.telebirrMockService = telebirrMockService;
     }
 
     /**
      * apply a fabric token to request other interface
      */
     public String applyFabricToken() {
+        if (pwsConfig.isMockEnabled()) {
+            return telebirrMockService.mockFabricToken();
+        }
+
         Map<String, String> params = new HashMap<>();
         params.put("appSecret", pwsConfig.getAppSecret());
         RequestBody body = RequestBody.create(new Gson().toJson(params), JSON);

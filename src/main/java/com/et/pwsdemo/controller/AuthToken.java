@@ -4,6 +4,7 @@ import com.et.pwsdemo.config.PWSConfig;
 import com.et.pwsdemo.entity.request.AuthTokenRequest;
 import com.et.pwsdemo.entity.response.AuthTokenResponse;
 import com.et.pwsdemo.service.ApplyFabricTokenService;
+import com.et.pwsdemo.service.TelebirrMockService;
 import com.et.pwsdemo.utils.OkHttpClientBuilder;
 import com.et.pwsdemo.utils.ToolUtils;
 import com.google.gson.Gson;
@@ -34,12 +35,19 @@ public class AuthToken {
 
     @Autowired
     OkHttpClientBuilder okHttpClientBuilder;
+
+    @Autowired
+    TelebirrMockService telebirrMockService;
     /**
      * verify the token from app. or from the interface 'ApplyH5Token'
      */
     @ResponseBody
     @RequestMapping("/auth/token")
     public AuthTokenResponse authToken(@org.springframework.web.bind.annotation.RequestBody AuthTokenRequest input) {
+        if (pwsConfig.isMockEnabled()) {
+            return telebirrMockService.mockAuthTokenResponse();
+        }
+
         String fabricToken = applyFabricTokenService.applyFabricToken();
         Map<String, Object> params = createRequestObject(input);
         RequestBody body = RequestBody.create(new Gson().toJson(params), JSON);

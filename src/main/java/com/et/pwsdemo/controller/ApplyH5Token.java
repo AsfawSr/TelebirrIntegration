@@ -3,6 +3,7 @@ package com.et.pwsdemo.controller;
 import com.et.pwsdemo.config.PWSConfig;
 import com.et.pwsdemo.entity.response.ApplyH5TokenResponse;
 import com.et.pwsdemo.service.ApplyFabricTokenService;
+import com.et.pwsdemo.service.TelebirrMockService;
 import com.et.pwsdemo.utils.OkHttpClientBuilder;
 import com.et.pwsdemo.utils.ToolUtils;
 import com.google.gson.Gson;
@@ -35,6 +36,9 @@ public class ApplyH5Token {
     @Autowired
     OkHttpClientBuilder okHttpClientBuilder;
 
+    @Autowired
+    TelebirrMockService telebirrMockService;
+
     /**
      * apply a H5 Token，
      * this token just for test, the real token need get from Super App use javascript interface.
@@ -42,6 +46,10 @@ public class ApplyH5Token {
     @ResponseBody
     @RequestMapping("/apply/h5token")
     public ApplyH5TokenResponse applyH5Token() {
+        if (pwsConfig.isMockEnabled()) {
+            return telebirrMockService.mockApplyH5TokenResponse();
+        }
+
         String fabricToken = applyFabricTokenService.applyFabricToken();
         Map<String, Object> params = createRequestObject();
         RequestBody body = RequestBody.create(new Gson().toJson(params), JSON);

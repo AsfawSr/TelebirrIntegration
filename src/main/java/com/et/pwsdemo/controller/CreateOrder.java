@@ -4,6 +4,7 @@ import com.et.pwsdemo.config.PWSConfig;
 import com.et.pwsdemo.entity.request.CreateOrderRequest;
 import com.et.pwsdemo.entity.response.CreateOrderResponse;
 import com.et.pwsdemo.service.ApplyFabricTokenService;
+import com.et.pwsdemo.service.TelebirrMockService;
 import com.et.pwsdemo.utils.OkHttpClientBuilder;
 import com.et.pwsdemo.utils.ToolUtils;
 import com.google.gson.Gson;
@@ -39,6 +40,9 @@ public class CreateOrder {
     @Autowired
     OkHttpClientBuilder okHttpClientBuilder;
 
+    @Autowired
+    TelebirrMockService telebirrMockService;
+
     /**
      * create a PWS order
      */
@@ -47,6 +51,10 @@ public class CreateOrder {
     @ResponseBody
     @RequestMapping("/create/order")
     public String applyH5Token(@org.springframework.web.bind.annotation.RequestBody CreateOrderRequest input) {
+        if (pwsConfig.isMockEnabled()) {
+            return telebirrMockService.mockCreateOrderRawRequest();
+        }
+
         String fabricToken = applyFabricTokenService.applyFabricToken();
         // input.setAmount("200");
         // input.setTitle("Gift card");

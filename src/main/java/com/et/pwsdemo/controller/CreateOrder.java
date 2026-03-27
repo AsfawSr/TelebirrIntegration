@@ -33,6 +33,9 @@ public class CreateOrder {
     @Autowired
     ApplyFabricTokenService applyFabricTokenService;
 
+    @Autowired
+    PWSConfig pwsConfig;
+
     /**
      * create a PWS order
      */
@@ -49,8 +52,8 @@ public class CreateOrder {
         String json = gson.toJson(params);
         RequestBody body = FormBody.create(json, JSON);
         Request request = new Request.Builder()
-                .url(PWSConfig.BaseUrl + "/payment/v1/merchant/preOrder")
-                .addHeader("X-APP-Key", PWSConfig.FabricAppId)
+                .url(pwsConfig.getBaseUrl() + "/payment/v1/merchant/preOrder")
+                .addHeader("X-APP-Key", pwsConfig.getFabricAppId())
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Authorization", fabricToken)
                 .post(body)
@@ -79,10 +82,10 @@ public class CreateOrder {
         Map<String, Object> biz = new HashMap<>();
         req.put("biz_content", biz);
         // fill biz object
-        biz.put("notify_url", "https://www.baidu.com");
+        biz.put("notify_url", pwsConfig.getNotifyUrl());
         biz.put("trade_type", "InApp");
-        biz.put("appid", PWSConfig.MerchantAppId);
-        biz.put("merch_code", PWSConfig.MerchantCode);
+        biz.put("appid", pwsConfig.getMerchantAppId());
+        biz.put("merch_code", pwsConfig.getMerchantCode());
         biz.put("merch_order_id", createMerchantOrderId());
         biz.put("title", input.getTitle());
         biz.put("total_amount", input.getAmount());
@@ -93,7 +96,7 @@ public class CreateOrder {
         
         // sign type and sign string
         req.put("sign_type", "SHA256WithRSA");
-        req.put("sign", ToolUtils.signRequestBody(req));
+        req.put("sign", ToolUtils.signRequestBody(req, pwsConfig.getMerchantPrivateKey()));
         System.out.println();
         System.out.println("createRequestObject: ");
         System.out.println(req);
@@ -108,12 +111,12 @@ public class CreateOrder {
 
     private String createRawRequest(CreateOrderResponse response) {
         Map<String, Object> map = new HashMap<>();
-        map.put("appid", PWSConfig.MerchantAppId);
-        map.put("merch_code", PWSConfig.MerchantCode);
+        map.put("appid", pwsConfig.getMerchantAppId());
+        map.put("merch_code", pwsConfig.getMerchantCode());
         map.put("nonce_str", ToolUtils.createNonceStr());
         map.put("prepay_id", response);
         map.put("timestamp", ToolUtils.createTimeStamp());
-        String sign = ToolUtils.signRequestBody(map);
+        String sign = ToolUtils.signRequestBody(map, pwsConfig.getMerchantPrivateKey());
         String rawRequest = "";
         for (String key : map.keySet()) {
             rawRequest += key + "=" + map.get(key) + "&";

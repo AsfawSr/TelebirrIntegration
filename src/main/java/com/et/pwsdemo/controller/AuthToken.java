@@ -28,6 +28,9 @@ import java.util.Map;
 public class AuthToken {
     @Autowired
     ApplyFabricTokenService applyFabricTokenService;
+
+    @Autowired
+    PWSConfig pwsConfig;
     /**
      * verify the token from app. or from the interface 'ApplyH5Token'
      */
@@ -38,8 +41,8 @@ public class AuthToken {
         Map<String, Object> params = createRequestObject(input);
         RequestBody body = RequestBody.create(new Gson().toJson(params), JSON);
         Request request = new Request.Builder()
-                .url(PWSConfig.BaseUrl + "/payment/v1/auth/authToken")
-                .addHeader("X-APP-Key", PWSConfig.FabricAppId)
+                .url(pwsConfig.getBaseUrl() + "/payment/v1/auth/authToken")
+                .addHeader("X-APP-Key", pwsConfig.getFabricAppId())
                 .addHeader("Authorization", fabricToken)
                 .post(body)
                 .build();
@@ -65,12 +68,12 @@ public class AuthToken {
         // fill biz object
         biz.put("access_token", input.getAuthToken());
         biz.put("trade_type", "InApp");
-        biz.put("appid", PWSConfig.MerchantAppId);
+        biz.put("appid", pwsConfig.getMerchantAppId());
         biz.put("resource_type", "OpenId");
 
         // sign type and sign string
         req.put("sign_type", "SHA256WithRSA");
-        req.put("sign", ToolUtils.signRequestBody(req));
+        req.put("sign", ToolUtils.signRequestBody(req, pwsConfig.getMerchantPrivateKey()));
         return req;
     }
 }

@@ -29,6 +29,9 @@ public class ApplyH5Token {
     @Autowired
     ApplyFabricTokenService applyFabricTokenService;
 
+    @Autowired
+    PWSConfig pwsConfig;
+
     /**
      * apply a H5 Token，
      * this token just for test, the real token need get from Super App use javascript interface.
@@ -40,8 +43,8 @@ public class ApplyH5Token {
         Map<String, Object> params = createRequestObject();
         RequestBody body = RequestBody.create(new Gson().toJson(params), JSON);
         Request request = new Request.Builder()
-                .url(PWSConfig.BaseUrl + "/payment/v1/auth/applyH5Token")
-                .addHeader("X-APP-Key", PWSConfig.FabricAppId)
+                .url(pwsConfig.getBaseUrl() + "/payment/v1/auth/applyH5Token")
+                .addHeader("X-APP-Key", pwsConfig.getFabricAppId())
                 .addHeader("Authorization", fabricToken)
                 .post(body)
                 .build();
@@ -61,23 +64,23 @@ public class ApplyH5Token {
         req.put("nonce_str", ToolUtils.createNonceStr());
         req.put("method", "payment.applyh5token");
         req.put("version", "1.0");
-        req.put("app_code", PWSConfig.MerchantCode);
+        req.put("app_code", pwsConfig.getMerchantCode());
         Map<String, Object> biz = new HashMap<>();
         req.put("biz_content", biz);
 
         // fill business object. more detail info, please query api description
-        biz.put("appid", PWSConfig.MerchantAppId);
-        biz.put("auth_identifier", PWSConfig.TestPhoneNumber);
+        biz.put("appid", pwsConfig.getMerchantAppId());
+        biz.put("auth_identifier", pwsConfig.getTestPhoneNumber());
         biz.put("auth_identifier_type", "01");
         biz.put("auth_type", "1000");
-        biz.put("auth_merch_code", PWSConfig.MerchantCode);
+        biz.put("auth_merch_code", pwsConfig.getMerchantCode());
         biz.put("trade_type", "InApp");
         biz.put("resource_type", "OpenId");
         biz.put("auth_limit", "5");
 
         // sign type and sign string
         req.put("sign_type", "SHA256WithRSA");
-        req.put("sign", ToolUtils.signRequestBody(req));
+        req.put("sign", ToolUtils.signRequestBody(req, pwsConfig.getMerchantPrivateKey()));
         return req;
     }
 }

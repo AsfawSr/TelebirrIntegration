@@ -2,8 +2,7 @@ package com.et.pwsdemo.utils;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import com.et.pwsdemo.config.PWSConfig;
-
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -22,7 +21,7 @@ public class ToolUtils {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
-    public static String signRequestBody(Map<String, Object> req) {
+    public static String signRequestBody(Map<String, Object> req, String merchantPrivateKey) {
         Map<String, String> map = new HashMap<>();
         for (String key : req.keySet()) {
             if (excludes.contains(key)) {
@@ -57,18 +56,18 @@ public class ToolUtils {
         }
         // signString format example: "appid=xxxxx&app_code=xxxxxxxx&access_token=xxxx-xxxxx-xxxx-xxxxx&nonce_str=xxxxxxx&rade_type=InApp"
         String signString = String.join("&", list);
-        return signSHA256WithRSA(signString);
+        return signSHA256WithRSA(signString, merchantPrivateKey);
     }
 
-    private static String signSHA256WithRSA(String input) {
+    private static String signSHA256WithRSA(String input, String merchantPrivateKey) {
         String signature = null;
         try {
-            PrivateKey privateKey = getPrivateKey(PWSConfig.MerchantPrivateKey);
+            PrivateKey privateKey = getPrivateKey(merchantPrivateKey);
 
             //Signature sign = Signature.getInstance("SHA256withRSA");
             Signature sign = Signature.getInstance("SHA256withRSA/PSS", new BouncyCastleProvider());
             sign.initSign(privateKey);
-            sign.update(input.getBytes());
+            sign.update(input.getBytes(StandardCharsets.UTF_8));
             byte[] signed = sign.sign();
             signature = Base64.getEncoder().encodeToString(signed);
         } catch (Exception e) {

@@ -18,16 +18,22 @@ import java.util.Map;
 
 @Service
 public class ApplyFabricTokenService {
+    private final PWSConfig pwsConfig;
+
+    public ApplyFabricTokenService(PWSConfig pwsConfig) {
+        this.pwsConfig = pwsConfig;
+    }
+
     /**
      * apply a fabric token to request other interface
      */
     public String applyFabricToken() {
         Map<String, String> params = new HashMap<>();
-        params.put("appSecret", PWSConfig.AppSecret);
+        params.put("appSecret", pwsConfig.getAppSecret());
         RequestBody body = RequestBody.create(new Gson().toJson(params), JSON);
         Request request = new Request.Builder()
-                .url(PWSConfig.BaseUrl + "/payment/v1/token")
-                .addHeader("X-APP-Key", PWSConfig.FabricAppId)
+                .url(pwsConfig.getBaseUrl() + "/payment/v1/token")
+                .addHeader("X-APP-Key", pwsConfig.getFabricAppId())
                 .post(body)
                 .build();
         try {

@@ -19,9 +19,11 @@ import java.util.Map;
 @Service
 public class ApplyFabricTokenService {
     private final PWSConfig pwsConfig;
+    private final OkHttpClientBuilder okHttpClientBuilder;
 
-    public ApplyFabricTokenService(PWSConfig pwsConfig) {
+    public ApplyFabricTokenService(PWSConfig pwsConfig, OkHttpClientBuilder okHttpClientBuilder) {
         this.pwsConfig = pwsConfig;
+        this.okHttpClientBuilder = okHttpClientBuilder;
     }
 
     /**
@@ -37,7 +39,7 @@ public class ApplyFabricTokenService {
                 .post(body)
                 .build();
         try {
-            OkHttpClient client = OkHttpClientBuilder.createClient();
+            OkHttpClient client = okHttpClientBuilder.createClient();
             Response response = client.newCall(request).execute();
             FabricTokenResponse res = new Gson().fromJson(response.body().string(), FabricTokenResponse.class);
             return res.getToken();

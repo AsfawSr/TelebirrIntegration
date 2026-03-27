@@ -36,6 +36,9 @@ public class CreateOrder {
     @Autowired
     PWSConfig pwsConfig;
 
+    @Autowired
+    OkHttpClientBuilder okHttpClientBuilder;
+
     /**
      * create a PWS order
      */
@@ -59,7 +62,7 @@ public class CreateOrder {
                 .post(body)
                 .build();
         try {
-            OkHttpClient client = OkHttpClientBuilder.createClient();
+            OkHttpClient client = okHttpClientBuilder.createClient();
             System.out.println(client);
             Response response = client.newCall(request).execute();
             System.out.println(request);

@@ -31,6 +31,9 @@ public class AuthToken {
 
     @Autowired
     PWSConfig pwsConfig;
+
+    @Autowired
+    OkHttpClientBuilder okHttpClientBuilder;
     /**
      * verify the token from app. or from the interface 'ApplyH5Token'
      */
@@ -47,7 +50,7 @@ public class AuthToken {
                 .post(body)
                 .build();
         try {
-            OkHttpClient client = OkHttpClientBuilder.createClient();
+            OkHttpClient client = okHttpClientBuilder.createClient();
             Response response = client.newCall(request).execute();
             return new Gson().fromJson(response.body().string(), AuthTokenResponse.class);
         } catch (Exception ex) {

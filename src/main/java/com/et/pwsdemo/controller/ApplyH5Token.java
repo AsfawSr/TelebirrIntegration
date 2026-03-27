@@ -32,6 +32,9 @@ public class ApplyH5Token {
     @Autowired
     PWSConfig pwsConfig;
 
+    @Autowired
+    OkHttpClientBuilder okHttpClientBuilder;
+
     /**
      * apply a H5 Token，
      * this token just for test, the real token need get from Super App use javascript interface.
@@ -49,7 +52,7 @@ public class ApplyH5Token {
                 .post(body)
                 .build();
         try {
-            OkHttpClient client = OkHttpClientBuilder.createClient();
+            OkHttpClient client = okHttpClientBuilder.createClient();
             Response response = client.newCall(request).execute();
             return new Gson().fromJson(response.body().string(), ApplyH5TokenResponse.class);
         } catch (Exception ex) {

@@ -18,6 +18,9 @@ public class PWSConfig {
     private String testPhoneNumber;
     private String baseUrl;
     private String notifyUrl;
+    private String tlsTrustStorePath;
+    private String tlsTrustStorePassword;
+    private String tlsTrustStoreType;
 
     public String getFabricAppId() {
         return fabricAppId;
@@ -81,5 +84,29 @@ public class PWSConfig {
 
     public void setNotifyUrl(String notifyUrl) {
         this.notifyUrl = notifyUrl;
+    }
+
+    public String getTlsTrustStorePath() {
+        return tlsTrustStorePath;
+    }
+
+    public void setTlsTrustStorePath(String tlsTrustStorePath) {
+        this.tlsTrustStorePath = tlsTrustStorePath;
+    }
+
+    public String getTlsTrustStorePassword() {
+        return tlsTrustStorePassword;
+    }
+
+    public void setTlsTrustStorePassword(String tlsTrustStorePassword) {
+        this.tlsTrustStorePassword = tlsTrustStorePassword;
+    }
+
+    public String getTlsTrustStoreType() {
+        return tlsTrustStoreType;
+    }
+
+    public void setTlsTrustStoreType(String tlsTrustStoreType) {
+        this.tlsTrustStoreType = tlsTrustStoreType;
     }
 }
